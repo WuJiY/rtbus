@@ -85,6 +85,9 @@ func (brt *BJRTBusApi) GetBusLineDir(lineno, dirname string) (bdi *rtbus.BusDirI
 
 	// refresh running bus
 	bdi.RunningBuses, err = brt.GetRunningBus(lineno, bdi.ID)
+	if err.Error() == "获取数据失败" {
+		return bdi, nil
+	}
 	return
 }
 
