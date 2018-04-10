@@ -1,4 +1,4 @@
-package api
+package httputil
 
 import (
 	"net"
@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	DEFAULT_HTTP_RETRY  = 3
-	DEFAULT_HTTP_CLIENT = NewHttpClient(3 * time.Second)
+	DEFAULT_HTTP_RETRY  = 2
+	DEFAULT_HTTP_CLIENT = NewHttpClient(2 * time.Second)
 )
 
 func NewHttpClient(timeout time.Duration) *http.Client {

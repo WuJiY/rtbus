@@ -1,4 +1,4 @@
-package api
+package beijing
 
 import (
 	"crypto/md5"

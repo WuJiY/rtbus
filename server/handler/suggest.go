@@ -1,13 +1,16 @@
 package handler
 
 import (
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
-	"github.com/xuebing1110/location/amap"
-	"github.com/xuebing1110/rtbus/api"
 	"net/http"
 	"strings"
 	"sync"
+
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
+	"github.com/xuebing1110/location/amap"
+	//"github.com/xuebing1110/rtbus/api"
+	"github.com/xuebing1110/rtbus/pkg/httputil"
+	"github.com/xuebing1110/rtbus/pkg/rtbus"
 )
 
 type NearestBusStation struct {
@@ -20,19 +23,19 @@ type NearestBusStation struct {
 }
 
 type BusLineDirOverview struct {
-	LineNo     string            `json:"lineno"`
-	Direction  int               `json:"linedir"`
-	AnotherDir string            `json:"another_dir"`
-	StartSn    string            `json:"startsn,omitempty"`
-	EndSn      string            `json:"endsn,omitempty"`
-	NextSn     string            `json:"nextsn"`
-	Price      string            `json:"price,omitempty"`
-	SnNum      int               `json:"stationsNum,omitempty"`
-	SnIndex    int               `json:"stationIndex"`
-	FirstTime  string            `json:"firstTime,omitempty"`
-	LastTime   string            `json:"lastTime,omitempty"`
-	Buses      []*api.RunningBus `json:"buses"`
-	IsSupport  bool              `json:"issupport"`
+	LineNo     string              `json:"lineno"`
+	Direction  int                 `json:"linedir"`
+	AnotherDir string              `json:"another_dir"`
+	StartSn    string              `json:"startsn,omitempty"`
+	EndSn      string              `json:"endsn,omitempty"`
+	NextSn     string              `json:"nextsn"`
+	Price      string              `json:"price,omitempty"`
+	SnNum      int                 `json:"stationsNum,omitempty"`
+	SnIndex    int                 `json:"stationIndex"`
+	FirstTime  string              `json:"firstTime,omitempty"`
+	LastTime   string              `json:"lastTime,omitempty"`
+	Buses      []*rtbus.RunningBus `json:"buses"`
+	IsSupport  bool                `json:"issupport"`
 }
 
 var (
@@ -42,7 +45,7 @@ var (
 
 func init() {
 	amapClient = amap.NewClient(AMAP_KEY)
-	amapClient.HttpClient = api.DEFAULT_HTTP_CLIENT
+	amapClient.HttpClient = httputil.DEFAULT_HTTP_CLIENT
 }
 
 func BusLineOverview(params martini.Params, r render.Render) {
@@ -187,7 +190,7 @@ func GetBusLineDirOverview(city, lineno, station string, loadBus bool) (bldo *Bu
 	}
 
 	dirid := "0"
-	bdi, err := BusTool.GetBusLineDirInfo(city, lineno, dirid)
+	bdi, err := RTBusClient.GetBusLineDir(city, lineno, dirid)
 	if err != nil {
 		logger.Warn("%v", err)
 		return
@@ -225,12 +228,12 @@ func GetBusLineDirOverview(city, lineno, station string, loadBus bool) (bldo *Bu
 	//get running buses
 	if loadBus {
 		//logger.Info("getrt %s %s %s", city, lineno, dirid)
-		rbuses, err := BusTool.GetRT(city, lineno, dirid)
+		rbuses, err := RTBusClient.GetRunningBus(city, lineno, dirid)
 		//logger.Info("getrt %s %s %s over!", city, lineno, dirid)
 		if err != nil {
 			logger.Warn("%v", err)
 		} else {
-			rbs := make([]*api.RunningBus, 0)
+			rbs := make([]*rtbus.RunningBus, 0)
 			for _, rbus := range rbuses {
 				if rbus.No <= bldo.SnIndex || bldo.SnIndex == 0 {
 					rbs = append(rbs, rbus)
@@ -240,7 +243,7 @@ func GetBusLineDirOverview(city, lineno, station string, loadBus bool) (bldo *Bu
 			}
 
 			//reserve
-			bldo.Buses = make([]*api.RunningBus, 0)
+			bldo.Buses = make([]*rtbus.RunningBus, 0)
 			for i := len(rbs) - 1; i >= 0; i-- {
 				bldo.Buses = append(bldo.Buses, rbs[i])
 			}

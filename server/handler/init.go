@@ -2,17 +2,17 @@ package handler
 
 import (
 	"github.com/bingbaba/util/logs"
-	"github.com/xuebing1110/rtbus/api"
+	"github.com/xuebing1110/rtbus/pkg/client"
 )
 
 var (
-	BusTool *api.BusPool
-	logger  *logs.Blogger
+	RTBusClient *client.RTBus
+	logger      *logs.Blogger
 )
 
 func init() {
 	logger = logs.GetBlogger()
-	BusTool = api.NewBusPoolAsync()
+	RTBusClient = client.DefaultRTBus
 }
 
 type Response struct {

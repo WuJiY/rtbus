@@ -10,7 +10,7 @@ func BusLineHandler(params martini.Params, r render.Render) {
 	cityid := params["city"]
 	lineno := params["linenum"]
 
-	busline, err := BusTool.GetBusLineInfo(cityid, lineno)
+	busline, err := RTBusClient.GetBusLine(cityid, lineno)
 	if err != nil {
 		r.JSON(
 			502,
@@ -34,7 +34,7 @@ func BusDirHandler(params martini.Params, r render.Render) {
 	dirid := params["direction"]
 
 	//方向
-	bdi, err := BusTool.GetBusLineDirInfo(cityid, lineno, dirid)
+	bdi, err := RTBusClient.GetBusLineDir(cityid, lineno, dirid)
 	if err != nil {
 		r.JSON(
 			502,
@@ -57,7 +57,7 @@ func RunningBusHandler(params martini.Params, r render.Render) {
 	lineno := params["linenum"]
 	dirid := params["direction"]
 
-	rbus, err := BusTool.GetRT(cityid, lineno, dirid)
+	rbus, err := RTBusClient.GetRunningBus(cityid, lineno, dirid)
 	if err != nil {
 		r.JSON(
 			502,
