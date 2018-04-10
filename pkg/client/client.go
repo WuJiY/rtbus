@@ -61,6 +61,9 @@ func (rtb *RTBus) GetRunningBus(city, lineno, dirname string) (rbus []*rtbus.Run
 
 func (rtb *RTBus) getCityRTBus(city string) (cba rtbus.CityRTBusApi, found bool) {
 	city_code := location.GetCitycode(location.MustParseCity(city))
+	if city_code == "" {
+		city_code = city
+	}
 	cba, found = rtb.apis[city_code]
 	return
 }
