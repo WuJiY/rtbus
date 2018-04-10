@@ -8,8 +8,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/astaxie/beego/logs",
-			"Comment": "v1.7.2",
-			"Rev": "90999717dda6193c6f970eec52e289b0a9e74998"
+			"Comment": "v1.9.2-2-gf166888",
+			"Rev": "f16688817aa428d10361394015b40d096b680542"
 		},
 		{
 			"ImportPath": "github.com/bingbaba/util/httptool",
