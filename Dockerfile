@@ -1,4 +1,4 @@
-FROM golang:1.8.3-onbuild
+FROM golang:1.9.2-onbuild
 MAINTAINER Xue Bing <xuebing1110@gmail.com>
 
 RUN cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
