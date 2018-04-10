@@ -2,7 +2,6 @@ package rtbus
 
 import (
 	"fmt"
-	"sync"
 )
 
 type CityInfo struct {
@@ -15,14 +14,12 @@ type CityInfo struct {
 }
 
 type CityBusLines struct {
-	l          sync.Mutex
 	Source     string
 	CityInfo   *CityInfo
 	ByLineName map[string]*BusLine
 }
 
 type BusLine struct {
-	l          sync.Mutex
 	LineNum    string                 `json:"linenum"`
 	LineName   string                 `json:"lineName"`
 	Directions map[string]*BusDirInfo `json:"direction"`
@@ -42,9 +39,11 @@ func (bl *BusLine) GetBusDirInfo(dirname string) (*BusDirInfo, bool) {
 
 	return nil, false
 }
+func (bl *BusLine) PutDir(bd *BusDirInfo) {
+	bl.Directions[bd.GetDirName()] = bd
+}
 
 type BusDirInfo struct {
-	l         sync.Mutex
 	freshTime int64
 
 	did          string
@@ -75,7 +74,7 @@ type BusStation struct {
 
 type RunningBus struct {
 	No       int     `json:"order"`
-	Name     string  `json:"-"`
+	Name     string  `json:"name,omitempty"`
 	Status   float64 `json:"status"`
 	BusID    string  `json:"busid,omitempty"`
 	Lat      float64 `json:"lat,omitempty"`
