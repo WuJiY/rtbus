@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/xuebing1110/location"
 	"github.com/xuebing1110/rtbus/pkg/rtbus"
 )
 
@@ -32,7 +33,7 @@ func (rtb *RTBus) MustRegister(cba rtbus.CityRTBusApi) {
 }
 
 func (rtb *RTBus) GetBusLine(city, lineno string) (bl *rtbus.BusLine, err error) {
-	cba, found := rtb.apis[city]
+	cba, found := rtb.getCityRTBus(city)
 	if !found {
 		return nil, ERROR_NOTSUPPORT
 	}
@@ -41,7 +42,7 @@ func (rtb *RTBus) GetBusLine(city, lineno string) (bl *rtbus.BusLine, err error)
 }
 
 func (rtb *RTBus) GetBusLineDir(city, lineno, dirname string) (bdi *rtbus.BusDirInfo, err error) {
-	cba, found := rtb.apis[city]
+	cba, found := rtb.getCityRTBus(city)
 	if !found {
 		return nil, ERROR_NOTSUPPORT
 	}
@@ -50,10 +51,16 @@ func (rtb *RTBus) GetBusLineDir(city, lineno, dirname string) (bdi *rtbus.BusDir
 }
 
 func (rtb *RTBus) GetRunningBus(city, lineno, dirname string) (rbus []*rtbus.RunningBus, err error) {
-	cba, found := rtb.apis[city]
+	cba, found := rtb.getCityRTBus(city)
 	if !found {
 		return nil, ERROR_NOTSUPPORT
 	}
 
 	return cba.GetRunningBus(lineno, dirname)
+}
+
+func (rtb *RTBus) getCityRTBus(city string) (cba rtbus.CityRTBusApi, found bool) {
+	city_code := location.GetCitycode(location.MustParseCity(city))
+	cba, found = rtb.apis[city_code]
+	return
 }
