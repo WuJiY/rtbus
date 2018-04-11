@@ -123,11 +123,11 @@ func getRunningBus(bdi *rtbus.BusDirInfo) ([]*rtbus.RunningBus, error) {
 		if rbus.No > len(bdi.Stations) {
 			rbus.No = len(bdi.Stations)
 		}
-		//station := bdi.Stations[rbus.No-1]
-		//rbus.Distance = rtbus.Distance(station.Lat, station.Lon, rbus.Lat, rbus.Lng)
-		//if rbus.Distance < 15 {
-		//	rbus.Status = rtbus.BUS_ARRIVING_STATUS
-		//}
+		station := bdi.Stations[rbus.No-1]
+		rbus.Distance = rtbus.Distance(station.Lat, station.Lon, rbus.Lat, rbus.Lng)
+		if rbus.Distance < 30 {
+			rbus.Status = rtbus.BUS_ARRIVING_STATUS
+		}
 		//fmt.Printf("%f,%f <-> %f,%f : %d\n", station.Lat, station.Lon, rbus.Lat, rbus.Lng, rbus.Distance)
 	}
 
