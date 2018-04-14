@@ -66,7 +66,8 @@ func getBusLine(lineno string) (*rtbus.BusLine, error) {
 			return nil, err
 		}
 		bdi.Direction = i
-		bdi.Name = bdi.GetDirName()
+		//bdi.Name = bdi.GetDirName()
+		bdi.Name = lineno
 
 		if i == 0 {
 			if len(ssr) == 2 {
