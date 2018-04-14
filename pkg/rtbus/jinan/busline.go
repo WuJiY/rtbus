@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/xuebing1110/location"
 	"github.com/xuebing1110/rtbus/pkg/rtbus"
 	"sort"
 )
@@ -96,11 +97,12 @@ func getBusLineDirByLineid(lineid string) (*rtbus.BusDirInfo, error) {
 
 	stations := make([]*rtbus.BusStation, 0, len(resp.Result.Stations))
 	for i, station := range resp.Result.Stations {
+		lat, lng := location.BdDencrypt(station.Lat, station.Lng)
 		stations = append(stations, &rtbus.BusStation{
 			No:   i + 1,
 			Name: station.StationName,
-			Lat:  station.Lat,
-			Lon:  station.Lng,
+			Lat:  lat,
+			Lon:  lng,
 		})
 	}
 
@@ -126,7 +128,7 @@ func getRunningBus(bdi *rtbus.BusDirInfo) ([]*rtbus.RunningBus, error) {
 			rbus.No = len(bdi.Stations)
 		}
 		station := bdi.Stations[rbus.No-1]
-		rbus.Distance = rtbus.Distance(station.Lat, station.Lon, rbus.Lat, rbus.Lng)
+		rbus.Distance = int(location.Distance(station.Lat, station.Lon, rbus.Lat, rbus.Lng))
 		if rbus.Distance < 30 {
 			rbus.Status = rtbus.BUS_ARRIVING_STATUS
 		}
