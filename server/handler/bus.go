@@ -10,7 +10,7 @@ func BusLineHandler(params martini.Params, r render.Render) {
 	cityid := params["city"]
 	lineno := params["linenum"]
 
-	busline, err := RTBusClient.GetBusLine(cityid, lineno)
+	busline, err := RTBusClient.GetBusLine(cityid, lineno, true)
 	if err != nil {
 		r.JSON(
 			502,
