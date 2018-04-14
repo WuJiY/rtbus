@@ -13,7 +13,7 @@ func TestRTBusApi(t *testing.T) {
 	api = NewJinanRTBusApi()
 	lineno, linedir := testLine()
 
-	bl, err := api.GetBusLine(lineno)
+	bl, err := api.GetBusLine(lineno, true)
 	if err != nil {
 		t.Fatal(err)
 	}

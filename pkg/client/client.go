@@ -32,13 +32,13 @@ func (rtb *RTBus) MustRegister(cba rtbus.CityRTBusApi) {
 	rtb.apis[city] = cba
 }
 
-func (rtb *RTBus) GetBusLine(city, lineno string) (bl *rtbus.BusLine, err error) {
+func (rtb *RTBus) GetBusLine(city, lineno string, with_running_bus bool) (bl *rtbus.BusLine, err error) {
 	cba, found := rtb.getCityRTBus(city)
 	if !found {
 		return nil, ERROR_NOTSUPPORT
 	}
 
-	return cba.GetBusLine(lineno)
+	return cba.GetBusLine(lineno, with_running_bus)
 }
 
 func (rtb *RTBus) GetBusLineDir(city, lineno, dirname string) (bdi *rtbus.BusDirInfo, err error) {

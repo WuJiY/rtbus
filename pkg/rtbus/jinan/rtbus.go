@@ -25,22 +25,34 @@ func NewJinanRTBusApi() *JinanRTBusApi {
 func (cba *JinanRTBusApi) City() *rtbus.CityInfo {
 	return cba.city
 }
-func (cba *JinanRTBusApi) GetBusLine(lineno string) (*rtbus.BusLine, error) {
+func (cba *JinanRTBusApi) Search(keyword string) (bdis []*rtbus.BusDirInfo, err error) {
+	return
+}
+func (cba *JinanRTBusApi) GetBusLine(lineno string, with_running_bus bool) (*rtbus.BusLine, error) {
 	bl, err := getBusLine(lineno)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, bdi := range bl.Directions {
-		bdi.RunningBuses, err = getRunningBus(bdi)
-		if err != nil {
-			return bl, err
+	if with_running_bus {
+		for _, bdi := range bl.Directions {
+			bdi.RunningBuses, err = getRunningBus(bdi)
+			if err != nil {
+				return bl, err
+			}
 		}
+		return bl, nil
+	} else {
+		bl_new := &*bl
+		for _, bdi := range bl_new.Directions {
+			bdi.RunningBuses = []*rtbus.RunningBus{}
+		}
+		return bl_new, nil
 	}
-	return bl, nil
+
 }
 func (cba *JinanRTBusApi) GetBusLineDir(lineno, dirname string) (*rtbus.BusDirInfo, error) {
-	bl, err := cba.GetBusLine(lineno)
+	bl, err := getBusLine(lineno)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +67,7 @@ func (cba *JinanRTBusApi) GetBusLineDir(lineno, dirname string) (*rtbus.BusDirIn
 }
 
 func (cba *JinanRTBusApi) GetRunningBus(lineno, dirname string) (rbus []*rtbus.RunningBus, err error) {
-	bl, err := cba.GetBusLine(lineno)
+	bl, err := getBusLine(lineno)
 	if err != nil {
 		return rbus, err
 	}

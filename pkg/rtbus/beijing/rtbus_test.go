@@ -17,7 +17,15 @@ func TestRTBusApi(t *testing.T) {
 
 	lineno, linedir := testLine()
 
-	bl, err := api.GetBusLine(lineno)
+	bdis, err := api.Search(lineno)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(bdis) >= 2 {
+		t.Fatalf("expect get two busline directions,but get %d", len(bdis))
+	}
+
+	bl, err := api.GetBusLine(lineno, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,4 +49,5 @@ func TestRTBusApi(t *testing.T) {
 
 func testLine() (string, string) {
 	return "675", "通州李庄-左家庄"
+	//return "4", "0"
 }

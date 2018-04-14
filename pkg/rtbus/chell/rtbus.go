@@ -24,11 +24,14 @@ func NewChellRTBusApi(city *rtbus.CityInfo) *ChellRTBusApi {
 func (cba *ChellRTBusApi) City() *rtbus.CityInfo {
 	return cba.city
 }
-func (cba *ChellRTBusApi) GetBusLine(lineno string) (*rtbus.BusLine, error) {
+func (cba *ChellRTBusApi) Search(keyword string) (bdis []*rtbus.BusDirInfo, err error) {
+	return
+}
+func (cba *ChellRTBusApi) GetBusLine(lineno string, with_running_bus bool) (*rtbus.BusLine, error) {
 	return loadBusline(cba.city.ID, lineno)
 }
 func (cba *ChellRTBusApi) GetBusLineDir(lineno, dirname string) (*rtbus.BusDirInfo, error) {
-	bl, err := cba.GetBusLine(lineno)
+	bl, err := cba.GetBusLine(lineno, true)
 	if err != nil {
 		return nil, err
 	}

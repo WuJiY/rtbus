@@ -11,6 +11,7 @@ import (
 
 	"github.com/bingbaba/util/logs"
 	"github.com/xuebing1110/rtbus/pkg/rtbus"
+	"strings"
 )
 
 var (
@@ -24,6 +25,7 @@ const (
 type BJRTBusApi struct {
 	city        *rtbus.CityInfo
 	byShortName *sync.Map
+	linenos     []string
 }
 
 func NewBJRTBusApi() (*BJRTBusApi, error) {
@@ -45,6 +47,7 @@ func NewBJRTBusApi() (*BJRTBusApi, error) {
 		return nil, err
 	}
 
+	line_count := 0
 	for bus_dir := range bus_dir_chan {
 		//LOGGER.Info("%+v", bus_dir)
 
@@ -52,28 +55,83 @@ func NewBJRTBusApi() (*BJRTBusApi, error) {
 		if found {
 			v.(*rtbus.BusLine).Directions[bus_dir.GetDirName()] = bus_dir
 		} else {
+			line_count++
 			bj_api.byShortName.Store(bus_dir.Name, newBusLineByABLine(bus_dir))
 		}
 	}
+	bj_api.linenos = make([]string, 0, line_count)
+	bj_api.byShortName.Range(func(key, value interface{}) bool {
+		bj_api.linenos = append(bj_api.linenos, key.(string))
+		return true
+	})
+	sort.Strings(bj_api.linenos)
 
 	return bj_api, nil
 }
 
-func (brt *BJRTBusApi) GetBusLine(lineno string) (bl *rtbus.BusLine, err error) {
+func (brt *BJRTBusApi) Search(keyword string) (bdis []*rtbus.BusDirInfo, err error) {
+	//LOGGER.Info("%v", brt.linenos)
+	bdis = make([]*rtbus.BusDirInfo, 0, 10)
+	start_index := sort.Search(
+		len(brt.linenos),
+		func(i int) bool {
+			//LOGGER.Info("%d %s <=> %s", i, brt.linenos[i], keyword)
+			//if brt.linenos[i] == keyword {
+			//	LOGGER.Info("%v", strings.HasPrefix(brt.linenos[i], keyword))
+			//}
+			if strings.Compare(brt.linenos[i], keyword) >= 0 {
+				return true
+			} else {
+				return false
+			}
+		},
+	)
+	//LOGGER.Info("start index is %d, total length is %d", start_index, len(brt.linenos))
+	for i := start_index; i < len(brt.linenos); i++ {
+		if strings.HasPrefix(brt.linenos[i], keyword) {
+
+			bl, err := brt.GetBusLine(brt.linenos[i], false)
+			if err != nil {
+				continue
+			}
+			for _, bdi := range bl.Directions {
+				bdis = append(bdis, bdi)
+			}
+
+			if len(bdis) == 10 {
+				break
+			}
+		} else {
+			break
+		}
+	}
+
+	return
+}
+
+func (brt *BJRTBusApi) GetBusLine(lineno string, with_running_bus bool) (bl *rtbus.BusLine, err error) {
 	bus_line, found := brt.byShortName.Load(lineno)
 	if !found {
 		return nil, fmt.Errorf("can't found the line %s in beijing", lineno)
 	} else {
 		bl = bus_line.(*rtbus.BusLine)
-		// refresh running bus
-		for _, bdi := range bl.Directions {
-			//fmt.Printf("%+v", bdi)
-			bdi.RunningBuses, err = brt.GetRunningBus(lineno, bdi.ID)
-			if err != nil {
-				return bl, err
+		if with_running_bus {
+			// refresh running bus
+			for _, bdi := range bl.Directions {
+				//fmt.Printf("%+v", bdi)
+				bdi.RunningBuses, err = brt.GetRunningBus(lineno, bdi.ID)
+				if err != nil {
+					return bl, err
+				}
 			}
+			return bl, nil
+		} else {
+			bl_new := &*bl
+			for _, bdi := range bl_new.Directions {
+				bdi.RunningBuses = []*rtbus.RunningBus{}
+			}
+			return bl_new, nil
 		}
-		return bl, nil
 	}
 }
 

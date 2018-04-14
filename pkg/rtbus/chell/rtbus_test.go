@@ -26,7 +26,7 @@ func TestRTBusApi(t *testing.T) {
 	api = NewChellRTBusApi(qingdao_city)
 
 	lineno, linedir := testLine()
-	bl, err := api.GetBusLine(lineno)
+	bl, err := api.GetBusLine(lineno, true)
 	if err != nil {
 		t.Fatal(err)
 	}
