@@ -2,6 +2,7 @@ package rtbus
 
 import (
 	"fmt"
+	"sort"
 )
 
 type CityInfo struct {
@@ -63,6 +64,24 @@ type BusDirInfo struct {
 
 func (bdi *BusDirInfo) GetDirName() string {
 	return fmt.Sprintf("%s-%s", bdi.StartSn, bdi.EndSn)
+}
+
+type RunBuses []*RunningBus
+
+func (rb RunBuses) Len() int {
+	return len(rb)
+}
+func (rb RunBuses) Swap(i, j int) {
+	rb[i], rb[j] = rb[j], rb[i]
+}
+func (rb RunBuses) Less(i, j int) bool {
+	return rb[i].No < rb[j].No
+}
+
+func (bdi *BusDirInfo) Sort() {
+	rbs := RunBuses(bdi.RunningBuses)
+	sort.Sort(rbs)
+	bdi.RunningBuses = []*RunningBus(rbs)
 }
 
 type BusStation struct {

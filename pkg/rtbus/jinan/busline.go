@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/xuebing1110/rtbus/pkg/rtbus"
+	"sort"
 )
 
 const (
@@ -132,7 +133,11 @@ func getRunningBus(bdi *rtbus.BusDirInfo) ([]*rtbus.RunningBus, error) {
 		//fmt.Printf("%f,%f <-> %f,%f : %d\n", station.Lat, station.Lon, rbus.Lat, rbus.Lng, rbus.Distance)
 	}
 
-	return rbuses, nil
+	// sort
+	rbs := rtbus.RunBuses(rbuses)
+	sort.Sort(rbs)
+
+	return []*rtbus.RunningBus(rbs), nil
 }
 
 func getRunningBusByID(lineid string) ([]*rtbus.RunningBus, error) {
