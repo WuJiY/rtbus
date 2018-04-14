@@ -32,6 +32,15 @@ func (rtb *RTBus) MustRegister(cba rtbus.CityRTBusApi) {
 	rtb.apis[city] = cba
 }
 
+func (rtb *RTBus) Search(city, keyword string) (bdis []*rtbus.BusDirInfo, err error) {
+	cba, found := rtb.getCityRTBus(city)
+	if !found {
+		return nil, ERROR_NOTSUPPORT
+	}
+
+	return cba.Search(keyword)
+}
+
 func (rtb *RTBus) GetBusLine(city, lineno string, with_running_bus bool) (bl *rtbus.BusLine, err error) {
 	cba, found := rtb.getCityRTBus(city)
 	if !found {

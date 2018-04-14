@@ -25,7 +25,31 @@ func (cba *ChellRTBusApi) City() *rtbus.CityInfo {
 	return cba.city
 }
 func (cba *ChellRTBusApi) Search(keyword string) (bdis []*rtbus.BusDirInfo, err error) {
-	return
+	csls, err := search(cba.city.ID, keyword)
+	if err != nil {
+		return bdis, err
+	}
+
+	bdis = make([]*rtbus.BusDirInfo, 0, len(csls)*2)
+	for _, csl := range csls {
+		bdi, err := getNewestCllBusDirInfo(cba.City().ID, csl.LineId, csl.LineNo)
+		if err == nil {
+			bdis = append(bdis, bdi)
+
+			// other directions
+			if len(bdi.OtherDirIDs) > 0 {
+				for _, dir_id := range bdi.OtherDirIDs {
+					bdi_other, err_other := getNewestCllBusDirInfo(cba.City().ID, dir_id, csl.LineNo)
+					if err_other == nil {
+						bdis = append(bdis, bdi_other)
+					}
+				}
+			}
+		} else {
+
+		}
+	}
+	return bdis, nil
 }
 func (cba *ChellRTBusApi) GetBusLine(lineno string, with_running_bus bool) (*rtbus.BusLine, error) {
 	return loadBusline(cba.city.ID, lineno)

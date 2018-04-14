@@ -108,6 +108,7 @@ func getBusLineDirByLineid(lineid string) (*rtbus.BusDirInfo, error) {
 
 	bdi := &rtbus.BusDirInfo{
 		ID:       lineid,
+		Name:     resp.Result.LineName,
 		StartSn:  resp.Result.StartStationName,
 		EndSn:    resp.Result.EndStationName,
 		Price:    resp.Result.TicketPrice,

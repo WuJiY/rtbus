@@ -14,33 +14,48 @@ const (
 	FMT_CLL_URL_SEARCH = `http://web.chelaile.net.cn/api/basesearch/client/clientSearch.action?key=%s&count=3&s=h5&v=3.3.9&userId=browser_%d&h5Id=browser_%d&sign=1&cityId=%s`
 )
 
-func loadBusline(cityid, lineno string) (*rtbus.BusLine, error) {
+func search(cityid, keyword string) (csls []CllLineSearchLine, err error) {
 	curtime := time.Now().UnixNano() / 1000000
 	reqUrl := fmt.Sprintf(
 		FMT_CLL_URL_SEARCH,
-		lineno,
+		keyword,
 		curtime, curtime,
 		cityid,
 	)
 
 	httpreq, err := getCllHttpRequest(reqUrl)
 	if err != nil {
-		return nil, err
+		return csls, err
 	}
 
 	cllresp := &CllLineSearchResp{}
 	err = httptool.HttpDoJsonr(httpreq, cllresp)
 	if err != nil {
-		return nil, err
+		return csls, err
 	}
 
-	if len(cllresp.Data.Lines) == 0 || cllresp.ErrMsg != "" {
-		err = fmt.Errorf("search %s line failed:%s", lineno, cllresp.ErrMsg)
+	if cllresp.ErrMsg != "" || len(cllresp.Data.Lines) == 0 {
+		err = fmt.Errorf("search %s line failed:%s", keyword, cllresp.ErrMsg)
+		return csls, err
+	}
+
+	lines := cllresp.Data.Lines
+	csls = make([]CllLineSearchLine, 0, len(lines)*2)
+	for _, line := range lines {
+		csls = append(csls, line)
+	}
+
+	return csls, nil
+}
+
+func loadBusline(cityid, lineno string) (*rtbus.BusLine, error) {
+	csls, err := search(cityid, lineno)
+	if err != nil {
 		return nil, err
 	}
 
 	var bdi *rtbus.BusDirInfo
-	lineid := cllresp.Data.Lines[0].LineId
+	lineid := csls[0].LineId
 	bdi, err = getNewestCllBusDirInfo(cityid, lineid, lineno)
 	if err != nil {
 		return nil, err

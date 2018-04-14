@@ -23,13 +23,15 @@ type CllLineSearchResp struct {
 	ErrMsg   string `json:"errmsg"`
 	SVersion string `json:"sversion"`
 	Data     struct {
-		Lines []struct {
-			EndSn  string `json:"endSn"`
-			LineId string `json:"lineId"`
-			LineNo string `json:"lineNo"`
-			Name   string `json:"name"`
-		} `json:"lines"`
+		Lines []CllLineSearchLine `json:"lines"`
 	} `json:"data"`
+}
+
+type CllLineSearchLine struct {
+	EndSn  string `json:"endSn"`
+	LineId string `json:"lineId"`
+	LineNo string `json:"lineNo"`
+	Name   string `json:"name"`
 }
 
 func (cdd *CllLineDirData) getBusDirInfo() (bdi *rtbus.BusDirInfo) {

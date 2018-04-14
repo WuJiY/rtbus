@@ -26,7 +26,26 @@ func (cba *JinanRTBusApi) City() *rtbus.CityInfo {
 	return cba.city
 }
 func (cba *JinanRTBusApi) Search(keyword string) (bdis []*rtbus.BusDirInfo, err error) {
-	return
+	results, err := searchBusLine(keyword)
+	if err != nil {
+		return bdis, err
+	}
+
+	bdis = make([]*rtbus.BusDirInfo, 0, len(results))
+	last_linename := ""
+	for _, ret := range results {
+		bdi, err := getBusLineDirByLineid(ret.ID)
+		if err == nil {
+			if bdi.Name == last_linename {
+				bdi.Direction = 1
+			}
+
+			bdis = append(bdis, bdi)
+		}
+
+		last_linename = bdi.Name
+	}
+	return bdis, nil
 }
 func (cba *JinanRTBusApi) GetBusLine(lineno string, with_running_bus bool) (*rtbus.BusLine, error) {
 	bl, err := getBusLine(lineno)
