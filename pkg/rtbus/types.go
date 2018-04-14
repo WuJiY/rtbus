@@ -75,7 +75,7 @@ func (rb RunBuses) Swap(i, j int) {
 	rb[i], rb[j] = rb[j], rb[i]
 }
 func (rb RunBuses) Less(i, j int) bool {
-	return rb[i].No < rb[j].No
+	return rb[i].No < rb[j].No || (rb[i].No == rb[j].No && rb[i].Distance > rb[j].Distance)
 }
 
 func (bdi *BusDirInfo) Sort() {
