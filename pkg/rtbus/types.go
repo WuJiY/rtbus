@@ -88,7 +88,7 @@ type BusStation struct {
 	No   int     `json:"order"`
 	Name string  `json:"sn,omitempty"`
 	Lat  float64 `json:"lat,omitempty"`
-	Lon  float64 `json:"lon,omitempty"`
+	Lon  float64 `json:"lng,omitempty"`
 }
 
 type RunningBus struct {
