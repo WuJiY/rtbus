@@ -3,6 +3,7 @@ package chell
 import (
 	"time"
 
+	"github.com/xuebing1110/location"
 	"github.com/xuebing1110/rtbus/pkg/rtbus"
 )
 
@@ -38,6 +39,11 @@ func (cdd *CllLineDirData) getBusDirInfo() (bdi *rtbus.BusDirInfo) {
 	bdi = cdd.Line
 	if bdi == nil {
 		return
+	}
+
+	// convert coordinates from bd-05 to GCJ-09
+	for _, station := range cdd.Stations {
+		station.Lat, station.Lon = location.BdDencrypt(station.Lat, station.Lon)
 	}
 
 	bdi.Stations = cdd.Stations
