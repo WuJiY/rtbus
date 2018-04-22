@@ -3,6 +3,7 @@ package rtbus
 import (
 	"fmt"
 	"sort"
+	"strings"
 )
 
 type CityInfo struct {
@@ -27,13 +28,16 @@ type BusLine struct {
 }
 
 func (bl *BusLine) GetBusDirInfo(dirname string) (*BusDirInfo, bool) {
+	sn_array := strings.SplitN(dirname, "-", 2)
 	for dirkey, bdi := range bl.Directions {
 		//fmt.Printf("%+v\n", bdi)
 		if dirname == fmt.Sprintf("%d", bdi.Direction) ||
 			dirname == bdi.GetDirName() ||
 			dirname == dirkey ||
 			dirname == bdi.ID ||
-			(bdi.did != "" && dirname == bdi.did) {
+			(bdi.did != "" && dirname == bdi.did) ||
+			(len(sn_array) == 2 && sn_array[0] == bdi.StartSn) ||
+			(len(sn_array) == 2 && sn_array[1] == bdi.EndSn) {
 			return bdi, true
 		}
 	}
