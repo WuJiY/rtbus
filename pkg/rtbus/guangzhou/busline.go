@@ -69,8 +69,9 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 
 	stations := make([]*rtbus.BusStation, 0, len(br.BusLine.Stations))
 	for i, station := range br.BusLine.Stations {
-		// lat, lng := location.BdDencrypt(station.Lat, station.Lng)
-		lat, lng := station.Lat, station.Lon
+		// lat, lng := location.BdDencrypt(station.Lat, station.Lon)
+		lat, lng := location.GCJEncrypt(station.Lat, station.Lon)
+		// lat, lng := station.Lat, station.Lon
 		stations = append(stations, &rtbus.BusStation{
 			No:   i + 1,
 			Name: station.Name,
@@ -84,7 +85,8 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 	for i, b := range br.RunningBusInfo {
 		for _, bl_array := range [][]RunningBus{b.Bl, b.Bbl} {
 			for _, bl := range bl_array {
-				distance := int(location.Distance(bl.Lat, bl.Lon, stations[i].Lat, stations[i].Lon))
+				lat, lng := location.GCJEncrypt(bl.Lat, bl.Lon)
+				distance := int(location.Distance(lat, lng, stations[i].Lat, stations[i].Lon))
 
 				var no int
 				if i == 0 {
@@ -98,8 +100,8 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 					Name:     stations[no-1].Name,
 					Status:   rtbus.BUS_ARRIVING_FUTURE_STATUS,
 					BusID:    bl.No,
-					Lat:      bl.Lat,
-					Lng:      bl.Lon,
+					Lat:      lat,
+					Lng:      lng,
 					Distance: distance,
 					SyncTime: cur_time,
 				}
