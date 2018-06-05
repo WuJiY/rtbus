@@ -104,11 +104,19 @@ func BusLineSuggest(params martini.Params, r render.Render, httpreq *http.Reques
 	var city = req.City
 	var cityname = req.CityName
 
-	var globalWg sync.WaitGroup
-	nbss := make([]*NearestBusStation, len(resp.Tips))
-	for sni, tip := range resp.Tips {
-		globalWg.Add(1)
+	tip_len := len(resp.Tips)
+	if tip_len > 6 {
+		tip_len = 6
+	}
 
+	var globalWg sync.WaitGroup
+	nbss := make([]*NearestBusStation, tip_len)
+	for sni, tip := range resp.Tips {
+		if sni >= tip_len {
+			break
+		}
+
+		globalWg.Add(1)
 		go func(sni int, tip *amap.Tip) {
 			defer globalWg.Done()
 			sn := strings.TrimRight(tip.Name, "(公交站)")
