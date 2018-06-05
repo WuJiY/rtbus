@@ -66,6 +66,9 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 	if err != nil {
 		return nil, err
 	}
+	if br.BusLine == nil {
+		return nil, fmt.Errorf("read rb failed")
+	}
 
 	stations := make([]*rtbus.BusStation, 0, len(br.BusLine.Stations))
 	for i, station := range br.BusLine.Stations {
@@ -78,6 +81,9 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 			Lat:  lat,
 			Lon:  lng,
 		})
+	}
+	if len(stations) == 0 {
+		return nil, fmt.Errorf("read stations failed")
 	}
 
 	cur_time := time.Now().Unix()
@@ -93,6 +99,9 @@ func getBusLineDirByRouteId(lineid, routeid string, dirid int) (*rtbus.BusDirInf
 					no = 1
 				} else {
 					no = i + 2
+				}
+				if no > len(stations) {
+					no = len(stations)
 				}
 
 				rbus := &rtbus.RunningBus{
