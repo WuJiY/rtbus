@@ -35,7 +35,7 @@ func searchSpecBusline(lineno string) ([]*SearchResponseResult, error) {
 
 	ssr := make([]*SearchResponseResult, 0, 2)
 	for _, ret := range results {
-		if ret.LineName == lineno {
+		if ret.LineName == lineno || ret.LineName == "K"+lineno {
 			ssr = append(ssr, ret)
 			if len(ssr) == 2 {
 				break
