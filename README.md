@@ -1,49 +1,145 @@
 # 实时公交
-```golang
-package main
+# Document
+## 附近线路
+### PATH
+GET /api/v3/station-buses/bylocation/:location
 
-import (
-	"github.com/bingbaba/util/logs"
-	"github.com/xuebing1110/rtbus/pkg/client"
-)
+### RESPONSE
+```json
+[{
+  "sn": "公交站",
+  "lc": 5,
+  "slc": 1,
+  "l":"23.001,113.002",
+  "lines": [{
+      "no": "25",
+      "dir": "0",
+      "adir": "1",
+      "ssn": "起始站",
+      "esn":"终点站",
+      "nsn":"下一站",
+      "o": 12,
+      "buses":[{
+        "o": 10,
+        "s": 0.5,
+        "l": "23.001,113.002",
+        "d": 34
+      },{
+        "o": 10,
+        "s": 1,
+        "l": "23.001,113.002",
+        "d": 34
+      },{
+        "o": 11,
+        "s": 0.5,
+        "l": "23.001,113.002",
+        "d": 34
+      }]
+  }]
+}]
+```
 
-func main() {
-	//logger
-	logs.SetDebug(true)
-	logger := logs.GetBlogger()
+## 公交站线路
+### PATH
+GET /api/v3/station-buses/byline/:city/:sn
 
-	//init
-	rtbus_client := client.DefaultRTBus
+### RESPONSE
+同`附近线路`返回结果
 
-	//query lines
-	busLines := [][3]string{
-		//[3]string{"北京", "675", "0"},
-		// [3]string{"北京", "675", "通州李庄-左家庄"},
-		[3]string{"北京", "675", "左家庄-通州李庄"},
-		//[3]string{"青岛", "318", "市政府-虎山军体中心"},
-		[3]string{"青岛", "318", "1"},
-	}
 
-	for _, line := range busLines {
-		logger.Info("Query %s %s %s ...", line[0], line[1], line[2])
+## 线路信息
+## PATH
+GET /api/v3/lines/:city/:line/:dir
 
-		//线路-各公交站
-		bdi, err := rtbus_client.GetBusLineDir(line[0], line[1], line[2])
-		if err != nil {
-			logger.Error("%v", err)
-		}
-		logger.Info("%+v", bdi)
 
-		//线路-到站情况
-		rbuses, err := rtbus_client.GetRunningBus(line[0], line[1], line[2])
-		if err != nil {
-			logger.Error("%v", err)
-		}
-		logger.Info("%+v", rbuses)
-
-		logger.Info("Query %s %s %s over!", line[0], line[1], line[2])
-	}
+### 响应结果
+```json
+{
+  "no": "25",
+  "id": "xxxxxx",
+  "adir": "1",
+  "dir": "0",
+  "ssn": "起始站",
+  "esn": "终点站",
+  "price": "1元",
+  "ftime": "06:20",
+  "ltime": "22:30",
+  "ss":[{
+    "o": 1,
+    "sn":"起始站",
+    "l": "36.20105,120.5255"
+  },{
+    "o": 2,
+    "sn":"站点1",
+    "l": "36.20105,120.5255"
+  }],
+  "buses": [{
+    "o": 10,
+    "s": 0.5,
+    "l": "23.001,113.002",
+    "d": 34
+ }]
 }
 ```
-# 微信小程序
-![微信小程序](http://img-cdn.bingbaba.com/rtbus/qrcode.jpg)
+
+## 线路搜索
+## PATH
+GET /api/v3/search/:city/:keyword
+
+
+### 响应结果
+```json
+[{
+  "no": "25",
+  "id": "xxxxxx",
+  "adir": "1",
+  "dir": "0",
+  "ssn": "起始站",
+  "esn": "终点站",
+  "price": "1元",
+  "ftime": "06:20",
+  "ltime": "22:30",
+  "ss":[{
+    "o": 1,
+    "sn":"起始站",
+    "l": "36.20105,120.5255"
+  },{
+    "o": 2,
+    "sn":"站点1",
+    "l": "36.20105,120.5255"
+  }],
+  "buses": [{
+    "o": 10,
+    "s": 0.5,
+    "l": "23.001,113.002",
+    "d": 34
+ }]
+}]
+```
+
+
+## 线路运行公交
+
+### PATH
+GET /api/v3/lines/:city/:line/:dir/buses
+
+### Parameter
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+|sn|string|公交站|
+
+
+### RESPONSE
+```json
+[{
+  "o": 10,
+  "s": 0.5,
+  "l": "23.001,113.002",
+  "d": 34
+},{
+  "o": 10,
+  "s": 0.5,
+  "l": "23.001,113.002",
+  "d": 34
+}]
+```

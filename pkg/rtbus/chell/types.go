@@ -66,6 +66,11 @@ func (cdd *CllLineDirData) getBusDirInfo() (bdi *rtbus.BusDirInfo) {
 			rb.Name = bdi.Stations[rb.No-1].Name
 		}
 
+		//if rb.Distance == -1 && rb.Lat > 0 && rb.Lng > 0 {
+		//	s := bdi.Stations[rb.No-1]
+		//	rb.Distance = int(location.Distance(s.Lat, s.Lon, rb.Lat, rb.Lng))
+		//}
+
 		rb.SyncTime = curtime - rb.SyncTime
 	}
 
