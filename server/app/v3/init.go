@@ -6,5 +6,5 @@ import (
 )
 
 var (
-	router *gin.RouterGroup = app.Get().Group("/api/v3")
+	router *gin.RouterGroup = app.Get().Group("/rtbus/api/v3")
 )
