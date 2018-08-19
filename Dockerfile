@@ -22,9 +22,6 @@ WORKDIR $GOPATH/src/github.com/xuebing1110/rtbus
 RUN mkdir -p /app
 RUN go build -o /app/rtbus cmd/main.go
 
-# example config
-COPY server/log.json /app/log.json
-
 WORKDIR /app
 EXPOSE 8080
 CMD ["/app/rtbus"]
