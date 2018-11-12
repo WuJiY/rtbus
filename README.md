@@ -51,6 +51,10 @@ GET /api/v3/station-buses/byline/:city/:sn
 ## PATH
 GET /api/v3/lines/:city/:line/:dir
 
+### Parameter
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+|bus|bool|是否带有实时公交信息，默认为 true|
 
 ### 响应结果
 ```json
@@ -126,7 +130,7 @@ GET /api/v3/lines/:city/:line/:dir/buses
 ### Parameter
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-|sn|string|公交站|
+|order|string|公交站|
 
 
 ### RESPONSE
