@@ -103,5 +103,6 @@ type RunningBus struct {
 	Lat      float64 `json:"lat,omitempty"`
 	Lng      float64 `json:"lng,omitempty"`
 	Distance int     `json:"distanceToSc"`
+	Time     int     `json:"time"`
 	SyncTime int64   `json:"syncTime"`
 }

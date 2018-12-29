@@ -6,7 +6,7 @@ import (
 )
 
 func TestListLocalStationBuses(t *testing.T) {
-	sbs, err := ListLocalStationBuses("120.44052,36.18169", 1, 3)
+	sbs, err := ListLocalStationBuses("120.44052,36.18169", false, 1, 3)
 	if err != nil {
 		t.Fatal(err)
 	}

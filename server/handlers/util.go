@@ -6,15 +6,13 @@ import (
 	"time"
 
 	//"github.com/kataras/iris/context"
+	"github.com/bingbaba/util/logs"
 	"github.com/gin-gonic/gin"
-
-	log "git.haier.net/golang/logger"
-	"git.haier.net/golang/storage"
 )
 
 var (
 	REQUEST_TIMEOUT = 5 * time.Second
-	logger          = new(log.StdoutLogger)
+	logger          = new(logs.StdoutLogger)
 )
 
 type Response struct {
@@ -62,7 +60,7 @@ func sendJson(ctx *gin.Context, v interface{}) {
 }
 
 func sendJsonWithCode(ctx *gin.Context, code int, v interface{}) {
-	pretty := ctx.Param("pretty")
+	pretty := ctx.Query("pretty")
 	if pretty == "" || pretty == "0" || pretty == "false" || pretty == "False" {
 		ctx.JSON(code, v)
 	} else {
@@ -79,17 +77,6 @@ func sendBadResponseWithData(ctx *gin.Context, code int, msg, detail string, dat
 		Message: msg,
 		Detail:  detail,
 		Data:    data,
-	}
-	ctx.Set("message", msg)
-	ctx.Set("detail", detail)
-	sendJsonWithCode(ctx, code, resp)
-}
-
-func sendBadResponseByStorageErr(ctx *gin.Context, err error) {
-	code, msg, detail := storage.ParseToHttpError(err)
-	resp := &Response{
-		Message: msg,
-		Detail:  detail,
 	}
 	ctx.Set("message", msg)
 	ctx.Set("detail", detail)

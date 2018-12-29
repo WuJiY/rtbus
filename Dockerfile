@@ -1,10 +1,10 @@
-FROM golang:1.9.2-alpine3.6
+FROM golang:1.11.2-alpine3.7
 MAINTAINER Xue Bing <xuebing1110@gmail.com>
 
 # repo
 RUN cp /etc/apk/repositories /etc/apk/repositories.bak
-RUN echo "http://mirrors.aliyun.com/alpine/v3.6/main/" > /etc/apk/repositories
-RUN echo "http://mirrors.aliyun.com/alpine/v3.6/community/" >> /etc/apk/repositories
+RUN echo "http://mirrors.aliyun.com/alpine/v3.7/main/" > /etc/apk/repositories
+RUN echo "http://mirrors.aliyun.com/alpine/v3.7/community/" >> /etc/apk/repositories
 
 # timezone
 RUN apk update

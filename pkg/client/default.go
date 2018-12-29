@@ -5,6 +5,7 @@ import (
 	"github.com/xuebing1110/rtbus/pkg/rtbus/chell"
 	"github.com/xuebing1110/rtbus/pkg/rtbus/guangzhou"
 	"github.com/xuebing1110/rtbus/pkg/rtbus/jinan"
+	"github.com/xuebing1110/rtbus/pkg/rtbus/shanghai"
 )
 
 var (
@@ -35,4 +36,11 @@ func init() {
 	// guangzhou
 	cba_guangzhou := guangzhou.NewRTBusApi()
 	DefaultRTBus.MustRegister(cba_guangzhou)
+
+	// shanghai
+	cba_shanghai, err := shanghai.NewRTBusApi()
+	if err != nil {
+		panic(err)
+	}
+	DefaultRTBus.MustRegister(cba_shanghai)
 }

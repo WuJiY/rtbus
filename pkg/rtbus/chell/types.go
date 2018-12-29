@@ -59,9 +59,9 @@ func (cdd *CllLineDirData) getBusDirInfo() (bdi *rtbus.BusDirInfo) {
 		}
 
 		if rb.No <= 0 {
-			LOGGER.Warn("the running bus order is le zero: %d!", rb.No)
+			LOGGER.Warnf("the running bus order is le zero: %d!", rb.No)
 		} else if rb.No > len(bdi.Stations) {
-			LOGGER.Warn("the running bus number is too large: %d!", rb.No)
+			LOGGER.Warnf("the running bus number is too large: %d!", rb.No)
 		} else {
 			rb.Name = bdi.Stations[rb.No-1].Name
 		}

@@ -1,6 +1,7 @@
 package httptool
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -33,7 +34,17 @@ func RespJsonr(resp *http.Response, obj interface{}) error {
 }
 
 func respjsonr(resp_body []byte, obj interface{}) error {
+	if len(resp_body) == 0 {
+		return errors.New("parse empty to jsonr")
+	}
 	bodylen := len(resp_body)
+
+	if resp_body[0] == '"' && resp_body[bodylen-1] == '"' {
+		resp_body = bytes.Replace(resp_body, []byte(`\"`), []byte(`"`), -1)
+		resp_body = resp_body[1 : len(resp_body)-1]
+		bodylen = len(resp_body)
+	}
+
 	if bodylen <= 2 || (string(resp_body[0:2]) != "**" && string(resp_body[bodylen-2:bodylen]) != "##") {
 		return errors.New("parse to jsonr failed:" + string(resp_body))
 	}

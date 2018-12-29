@@ -48,7 +48,7 @@ func LoadBusLines(version string) (<-chan *rtbus.BusDirInfo, error) {
 
 				bd, err := loadLineDir(id)
 				if err != nil {
-					LOGGER.Error("init BJ lineid %s failed:%v", id, err)
+					LOGGER.Errorf("init BJ lineid %s failed:%v", id, err)
 					return
 				}
 				linedir_chan <- bd
@@ -67,7 +67,7 @@ func LoadBusLines(version string) (<-chan *rtbus.BusDirInfo, error) {
 func loadLineDir(id string) (*rtbus.BusDirInfo, error) {
 	abline, err := getBticLineDir(id)
 	if err != nil {
-		LOGGER.Error("init BJ lineid %s failed:%v", id, err)
+		LOGGER.Errorf("init BJ lineid %s failed:%v", id, err)
 		return nil, err
 	}
 
